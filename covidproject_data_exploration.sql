@@ -6,7 +6,7 @@ ORDER BY 3,4;
 
 -- Select Data that will be used
 
-SELECT LOCATION, date, total_cases, new_cases, total_deaths, population
+SELECT location, date, total_cases, new_cases, total_deaths, population
 FROM coviddeaths
 WHERE continent IS NOT null 
 ORDER BY 1,2;
@@ -40,7 +40,7 @@ ORDER BY percent_population_Infected DESC
 
 -- Countries with Highest Death Count per Population
 
-SELECT Location, MAX(total_deaths) as total_death_count
+SELECT location, MAX(total_deaths) as total_death_count
 FROM coviddeaths
 WHERE continent IS NOT null 
 GROUP BY location
@@ -83,9 +83,7 @@ WHERE dea.continent IS NOT null
 ORDER BY 2,3
 
 
-
-
--- UCE CTE
+-- A. UCE CTE
 -- number of columns in the braket must be the same as #columns in the table
 With pop_vs_vac(continent, location, date, population, new_vaccinations, rolling_people_vaccinated)
 as
@@ -100,6 +98,7 @@ WHERE dea.continent IS NOT NULL
 )
 SELECT * , CAST((rolling_people_vaccinated/population)*100 AS decimal)
 FROM pop_vs_vac
+
 
 --B. TEMP TABLE
 CREATE TABLE precent_population_vaccinated(
@@ -122,7 +121,7 @@ WHERE dea.continent IS NOT NULL
 SELECT * , CAST((rolling_people_vaccinated/population)*100 AS decimal)
 FROM precent_population_vaccinated
 
---C.subquery
+--C. Subquery
 SELECT * , (rolling_people_vaccinated/population)*100 
 FROM (SELECT dea.continent, dea.location, dea.date, dea.population, cv.new_vaccinations
 ,SUM(new_vaccinations)OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) AS rolling_people_vaccinated
